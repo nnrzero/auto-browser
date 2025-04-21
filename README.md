@@ -1,73 +1,177 @@
+# Auto Browser - Công cụ tự động hóa trình duyệt
+
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
+  <img src="https://raw.githubusercontent.com/puppeteer/puppeteer/main/website/static/img/puppeteer-logo.png" width="200" alt="Puppeteer Logo" />
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Giới thiệu
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Auto Browser là một API dựa trên NestJS giúp tự động hóa các thao tác trên trình duyệt web thông qua Puppeteer. Dự án này cho phép bạn thực hiện các tác vụ tự động như điều hướng trang web, nhập dữ liệu, nhấp chuột, và thực thi JavaScript tùy chỉnh.
 
-## Description
+## Tính năng
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **Quản lý profile trình duyệt**: Lưu trữ và sử dụng lại các profile trình duyệt
+- **Điều khiển nhiều tab**: Mở và quản lý nhiều tab cùng lúc
+- **Các hành động tự động hóa**:
+  - Điều hướng đến URL
+  - Nhập văn bản vào phần tử
+  - Nhấp vào phần tử
+  - Di chuột qua phần tử
+  - Nhấn phím
+  - Đợi phần tử xuất hiện
+  - Lấy văn bản từ phần tử
+  - Thực thi JavaScript tùy chỉnh
+  - Đóng tab
+- **API RESTful**: Dễ dàng tích hợp vào các ứng dụng khác
+- **Tài liệu Swagger**: API được mô tả đầy đủ với Swagger
+- **Bypass Anti-Bot**: Các cơ chế giúp tránh phát hiện bot
 
-## Installation
+## Cài đặt
 
 ```bash
-$ yarn install
+# Cài đặt các gói phụ thuộc
+$ npm install
+
+# Đảm bảo các dependency của Puppeteer được cài đặt
+$ npm run postinstall
 ```
 
-## Running the app
+## Chạy ứng dụng
 
 ```bash
-# development
-$ yarn run start
+# Chế độ phát triển
+$ npm run start:dev
 
-# watch mode
-$ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
+# Chế độ sản phẩm
+$ npm run start:prod
 ```
 
-## Test
+## Sử dụng API
+
+### Khởi tạo profile
+
+```
+GET /browser/setting-profile?profileId=your_profile_id
+```
+
+### Thực thi các hành động
 
 ```bash
-# unit tests
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
+POST /browser/execute
 ```
 
-## Support
+Nội dung yêu cầu (JSON):
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```json
+{
+  "profileId": "your_profile_id",
+  "actions": [
+    {
+      "type": "goto",
+      "params": {
+        "url": "https://google.com"
+      }
+    },
+    {
+      "type": "type",
+      "params": {
+        "selector": "input[name='q']",
+        "text": "NestJS Puppeteer"
+      }
+    },
+    {
+      "type": "press",
+      "params": {
+        "key": "Enter"
+      }
+    },
+    {
+      "type": "waitForSelector",
+      "params": {
+        "selector": "#search"
+      }
+    }
+  ]
+}
+```
 
-## Stay in touch
+### Danh sách các kiểu hành động
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+| Type            | Mô tả                  |
+| --------------- | ---------------------- |
+| goto            | Điều hướng đến URL     |
+| type            | Nhập văn bản           |
+| click           | Nhấp vào phần tử       |
+| hover           | Di chuột qua phần tử   |
+| press           | Nhấn phím              |
+| waitForSelector | Đợi phần tử xuất hiện  |
+| getText         | Lấy văn bản từ phần tử |
+| evaluate        | Thực thi JavaScript    |
+| closeTab        | Đóng tab hiện tại      |
 
-## License
+## Xem tài liệu API
 
-Nest is [MIT licensed](LICENSE).
+Sau khi khởi động ứng dụng, truy cập địa chỉ sau để xem tài liệu Swagger:
+
+```
+http://localhost:5008/api-docs
+```
+
+## Ví dụ sử dụng
+
+### Đăng nhập vào một trang web
+
+```json
+{
+  "profileId": "user@example.com",
+  "actions": [
+    {
+      "type": "goto",
+      "params": { "url": "https://example.com/login" }
+    },
+    {
+      "type": "type",
+      "params": { "selector": "input[name='username']", "text": "user@example.com" }
+    },
+    {
+      "type": "type",
+      "params": { "selector": "input[name='password']", "text": "securepassword" }
+    },
+    {
+      "type": "click",
+      "params": { "selector": "button[type='submit']" }
+    },
+    {
+      "type": "waitForSelector",
+      "params": { "selector": ".dashboard", "timeout": 5000 }
+    }
+  ]
+}
+```
+
+### Mở nhiều tab và đóng tab
+
+```json
+{
+  "profileId": "user@example.com",
+  "actions": [
+    {
+      "type": "goto",
+      "params": { "url": "https://example.com" }
+    },
+    {
+      "type": "closeTab",
+      "params": {}
+    }
+  ]
+}
+```
+
+## Yêu cầu hệ thống
+
+- Node.js (>= 16.0.0)
+- Chrome hoặc Chromium
+
+## Giấy phép
+
+[MIT Licensed](LICENSE)
