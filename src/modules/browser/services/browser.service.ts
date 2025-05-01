@@ -7,7 +7,7 @@ import { IBrowserActionParams, IBrowserActionResult, IGetPagesResult, IPageInfo 
 import StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
 const DEFAULT_BROWSER_OPTIONS = {
-  headless: true,
+  headless: false,
   userDataDir: 'data/local',
   args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--start-maximized'],
   defaultViewport: null
@@ -146,26 +146,25 @@ export class BrowserService {
   async executeAction(params: IBrowserActionParams): Promise<IBrowserActionResult> {
     let page: Page | null = null;
     let browser: Browser | null = null;
-    let pageId: string | null = null;
+    let pageId = params?.pageId || null;
 
     try {
       browser = await this.getBrowser(params.profileId);
 
-      if (params.pageId) {
-        page = await this.findPageInBrowser(browser, params.pageId);
+      if (pageId) {
+        page = await this.findPageInBrowser(browser, pageId);
 
         if (!page) {
           return {
             success: false,
-            pageId: params.pageId,
+            pageId,
             error: 'Page not found'
           };
         }
+      } else {
+        page = await browser.newPage();
+        pageId = await this.getPageId(page);
       }
-
-      page = await browser.newPage();
-
-      pageId = await this.getPageId(page);
 
       const result = await params.action(page);
 
